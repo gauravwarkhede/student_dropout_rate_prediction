@@ -130,6 +130,44 @@ HTML_TEMPLATE = """
                            radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
         }
 
+        body.theme-solar {
+            --bg-color: #1a0500;
+            --surface-glass: rgba(45, 15, 0, 0.7);
+            --surface-border: rgba(249, 115, 22, 0.2);
+            --text-secondary: #fed7aa;
+            --accent-primary: #f97316; 
+            --accent-secondary: #facc15; 
+            --danger: #ef4444;
+            --success: #84cc16;
+            --bg-gradient: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.15) 0px, transparent 50%),
+                           radial-gradient(at 100% 100%, rgba(250, 204, 21, 0.1) 0px, transparent 50%);
+        }
+
+        body.theme-void {
+            --bg-color: #000000;
+            --surface-glass: rgba(15, 15, 15, 0.85);
+            --surface-border: rgba(255, 255, 255, 0.15);
+            --text-secondary: #a3a3a3;
+            --accent-primary: #ffffff; 
+            --accent-secondary: #d4d4d4; 
+            --danger: #737373;
+            --success: #e5e5e5;
+            --bg-gradient: none;
+        }
+
+        body.theme-synthwave {
+            --bg-color: #0f0b1a;
+            --surface-glass: rgba(25, 15, 45, 0.75);
+            --surface-border: rgba(249, 115, 22, 0.3);
+            --text-secondary: #c4b5fd;
+            --accent-primary: #f97316; 
+            --accent-secondary: #a855f7; 
+            --danger: #e11d48;
+            --success: #2dd4bf;
+            --bg-gradient: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.15) 0px, transparent 50%),
+                           radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+        }
+
         /* --- GLOBAL STYLES --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -212,8 +250,10 @@ HTML_TEMPLATE = """
         .full-width { grid-column: 1 / -1; }
         .result-display { text-align: center; padding: 2rem; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .result-status { font-size: 2rem; font-weight: bold; margin-top: 1rem; transition: color 0.5s ease; }
-        .status-danger { color: var(--danger); }
-        .status-success { color: var(--success); }
+        
+        /* Logo Styles */
+        .logo-container { margin-bottom: 0.5rem; }
+        .logo-container svg { width: 48px; height: 48px; stroke: currentColor; stroke-width: 2; transition: all 0.3s ease; }
         
         /* Metrics */
         .metric-cards { display: flex; justify-content: space-around; width: 100%; margin-top: 1.5rem; }
@@ -245,6 +285,9 @@ HTML_TEMPLATE = """
             <option value="theme-forest">Theme: Deep Forest</option>
             <option value="theme-ice">Theme: Glacial Ice</option>
             <option value="theme-magic">Theme: Magic Purple</option>
+            <option value="theme-solar">Theme: Solar Flare</option>
+            <option value="theme-void">Theme: Abyssal Void</option>
+            <option value="theme-synthwave">Theme: Neon Synthwave</option>
         </select>
     </nav>
 
@@ -298,7 +341,9 @@ HTML_TEMPLATE = """
         <main class="dashboard-grid animate-up delay-2">
             <div class="glass-card full-width result-display">
                 <h3 style="color: var(--text-secondary); transition: color 0.5s ease;">Model Inference Result</h3>
-                <div id="resultOutput" class="result-status">Awaiting Input...</div>
+                <div id="resultOutput" class="result-status">
+                    <span style="font-size:1rem; color: var(--text-secondary);">Awaiting Input...</span>
+                </div>
                 <div class="metric-cards">
                     <div class="metric"><div id="probStay" class="metric-value">--%</div><div class="metric-label">Retention Prob.</div></div>
                     <div class="metric"><div id="probDrop" class="metric-value">--%</div><div class="metric-label">Dropout Prob.</div></div>
@@ -329,22 +374,43 @@ HTML_TEMPLATE = """
         const globalImportances = {{ importance | tojson | safe }};
         let donutChart, radarChart, barChart;
 
+        // --- SVG LOGOS ---
+        const SVG_DROPOUT = `
+            <div class="logo-container">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </div>
+        `;
+        
+        const SVG_RETENTION = `
+            <div class="logo-container">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+            </div>
+        `;
+
         // --- THEME COLOR ENGINE ---
-        // Maps body class names to specific hex codes for Chart.js redrawing
         const themePalette = {
             'theme-default': { primary: '#3b82f6', secondary: '#14b8a6', danger: '#ef4444', success: '#10b981', grid: 'rgba(255,255,255,0.1)' },
             'theme-cyberpunk': { primary: '#ff007c', secondary: '#00f0ff', danger: '#ff3333', success: '#00ff9d', grid: 'rgba(255,0,124,0.2)' },
             'theme-forest': { primary: '#2ea043', secondary: '#a8b545', danger: '#d73a49', success: '#28a745', grid: 'rgba(46,160,67,0.2)' },
             'theme-ice': { primary: '#38bdf8', secondary: '#c084fc', danger: '#f43f5e', success: '#0ea5e9', grid: 'rgba(56,189,248,0.2)' },
-            'theme-magic': { primary: '#a855f7', secondary: '#ec4899', danger: '#f43f5e', success: '#d946ef', grid: 'rgba(168,85,247,0.2)' }
+            'theme-magic': { primary: '#a855f7', secondary: '#ec4899', danger: '#f43f5e', success: '#d946ef', grid: 'rgba(168,85,247,0.2)' },
+            'theme-solar': { primary: '#f97316', secondary: '#facc15', danger: '#ef4444', success: '#84cc16', grid: 'rgba(249,115,22,0.2)' },
+            'theme-void': { primary: '#ffffff', secondary: '#d4d4d4', danger: '#737373', success: '#e5e5e5', grid: 'rgba(255,255,255,0.1)' },
+            'theme-synthwave': { primary: '#f97316', secondary: '#a855f7', danger: '#e11d48', success: '#2dd4bf', grid: 'rgba(249,115,22,0.2)' }
         };
 
-        // Convert hex to rgba for radar backgrounds
         function hexToRgba(hex, alpha) {
             let r = parseInt(hex.slice(1, 3), 16),
                 g = parseInt(hex.slice(3, 5), 16),
                 b = parseInt(hex.slice(5, 7), 16);
-            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            return \`rgba(\${r}, \${g}, \${b}, \${alpha})\`;
         }
 
         // --- CHART INITIALIZATION ---
@@ -356,7 +422,6 @@ HTML_TEMPLATE = """
         function initCharts() {
             const currentTheme = themePalette['theme-default'];
 
-            // Donut Chart
             const ctxDonut = document.getElementById('donutChart').getContext('2d');
             donutChart = new Chart(ctxDonut, {
                 type: 'doughnut',
@@ -364,7 +429,6 @@ HTML_TEMPLATE = """
                 options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom' } }, animation: { duration: 1000 } }
             });
 
-            // Radar Chart
             const ctxRadar = document.getElementById('radarChart').getContext('2d');
             radarChart = new Chart(ctxRadar, {
                 type: 'radar',
@@ -375,7 +439,6 @@ HTML_TEMPLATE = """
                 options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { color: currentTheme.grid }, grid: { color: currentTheme.grid }, pointLabels: { color: '#94a3b8' }, ticks: { display: false } } } }
             });
 
-            // Bar Chart (Feature Importance)
             const bgColors = globalImportances.map(val => val < 0 ? hexToRgba(currentTheme.success, 0.7) : hexToRgba(currentTheme.danger, 0.7));
             const borderColors = globalImportances.map(val => val < 0 ? currentTheme.success : currentTheme.danger);
             const ctxBar = document.getElementById('barChart').getContext('2d');
@@ -388,15 +451,12 @@ HTML_TEMPLATE = """
 
         // --- THEME SWITCHER LOGIC ---
         function changeTheme(themeClass) {
-            // Update Body Class
             document.body.className = themeClass;
             const colors = themePalette[themeClass];
 
-            // Update Donut Chart
             donutChart.data.datasets[0].backgroundColor = [colors.success, colors.danger];
             donutChart.update();
 
-            // Update Radar Chart
             radarChart.data.datasets[0].backgroundColor = hexToRgba(colors.primary, 0.2);
             radarChart.data.datasets[0].borderColor = colors.primary;
             radarChart.data.datasets[0].pointBackgroundColor = colors.secondary;
@@ -404,17 +464,24 @@ HTML_TEMPLATE = """
             radarChart.options.scales.r.grid.color = colors.grid;
             radarChart.update();
 
-            // Update Bar Chart
             const newBgColors = globalImportances.map(val => val < 0 ? hexToRgba(colors.success, 0.7) : hexToRgba(colors.danger, 0.7));
             const newBorderColors = globalImportances.map(val => val < 0 ? colors.success : colors.danger);
             barChart.data.datasets[0].backgroundColor = newBgColors;
             barChart.data.datasets[0].borderColor = newBorderColors;
             barChart.update();
             
-            // Force redraw risk text if it's already generated
+            // Force redraw risk text and logo if already generated
             const riskSpan = document.getElementById('riskLevel');
-            if(riskSpan.textContent === 'High') { riskSpan.style.color = colors.danger; }
-            else if(riskSpan.textContent === 'Low') { riskSpan.style.color = colors.success; }
+            const resOut = document.getElementById('resultOutput');
+            
+            if(riskSpan.textContent === 'High') { 
+                riskSpan.style.color = colors.danger; 
+                resOut.style.color = colors.danger;
+            }
+            else if(riskSpan.textContent === 'Low') { 
+                riskSpan.style.color = colors.success; 
+                resOut.style.color = colors.success;
+            }
         }
 
         // --- FORM SUBMISSION & API CALL ---
@@ -441,13 +508,15 @@ HTML_TEMPLATE = """
             const colors = themePalette[currentTheme];
 
             const resOut = document.getElementById('resultOutput');
-            resOut.textContent = apiData.prediction; 
             
+            // Inject correct SVG Logo + Text based on prediction
             if (apiData.prediction_code === 1) {
-                resOut.className = 'result-status'; // Reset
+                resOut.innerHTML = SVG_DROPOUT + \`<div>\${apiData.prediction}</div>\`;
+                resOut.className = 'result-status'; 
                 resOut.style.color = colors.danger;
             } else {
-                resOut.className = 'result-status'; // Reset
+                resOut.innerHTML = SVG_RETENTION + \`<div>\${apiData.prediction}</div>\`;
+                resOut.className = 'result-status'; 
                 resOut.style.color = colors.success;
             }
             
