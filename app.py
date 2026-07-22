@@ -183,54 +183,19 @@ HTML_TEMPLATE = """
             transition: background-color 0.5s ease, background-image 0.5s ease;
         }
 
-        /* Top Bar & Theme Switcher */
-        .top-nav {
-            display: flex;
-            justify-content: flex-end;
-            padding: 1rem 2rem 0;
-        }
-        .theme-selector {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--surface-border);
-            color: var(--text-primary);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-family: var(--font-family);
-            outline: none;
-            cursor: pointer;
-            transition: border-color 0.3s ease;
-        }
+        .top-nav { display: flex; justify-content: flex-end; padding: 1rem 2rem 0; }
+        .theme-selector { background: rgba(0,0,0,0.3); border: 1px solid var(--surface-border); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: 8px; font-family: var(--font-family); outline: none; cursor: pointer; transition: border-color 0.3s ease; }
         .theme-selector:focus { border-color: var(--accent-primary); }
         .theme-selector option { background: #000; color: #fff; }
 
-        /* Layout */
-        .container {
-            width: 95%;
-            max-width: 1400px;
-            margin: 0 auto 2rem auto;
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 2rem;
-        }
-
-        /* Cards */
-        .glass-card {
-            background: var(--surface-glass);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--surface-border);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.5s ease, border-color 0.5s ease;
-        }
+        .container { width: 95%; max-width: 1400px; margin: 0 auto 2rem auto; display: grid; grid-template-columns: 350px 1fr; gap: 2rem; }
+        .glass-card { background: var(--surface-glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--surface-border); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.5s ease, border-color 0.5s ease; }
         .glass-card:hover { transform: translateY(-5px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); }
         h1, h2, h3 { font-weight: 600; letter-spacing: -0.025em; }
         
         .app-header { text-align: center; padding: 1rem 1rem 2rem 1rem; animation: fadeInDown 0.8s ease-out; }
         .app-header h1 { font-size: 2.5rem; background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: all 0.5s ease; }
         
-        /* Inputs */
         .input-group { margin-bottom: 1.2rem; }
         .input-group label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.5s ease; }
         .input-group input { width: 100%; padding: 0.8rem 1rem; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--surface-border); border-radius: 8px; color: var(--text-primary); font-size: 1rem; transition: all 0.3s ease; }
@@ -241,21 +206,17 @@ HTML_TEMPLATE = """
         .form-container::-webkit-scrollbar-track { background: transparent; }
         .form-container::-webkit-scrollbar-thumb { background: var(--surface-border); border-radius: 4px; }
         
-        /* Buttons */
         .btn-predict { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%); border: none; border-radius: 8px; color: white; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.1em; position: relative; }
         .btn-predict:hover { filter: brightness(1.2); transform: scale(1.02); }
         
-        /* Dashboard */
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
         .full-width { grid-column: 1 / -1; }
         .result-display { text-align: center; padding: 2rem; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .result-status { font-size: 2rem; font-weight: bold; margin-top: 1rem; transition: color 0.5s ease; }
         
-        /* Logo Styles */
         .logo-container { margin-bottom: 0.5rem; }
         .logo-container svg { width: 48px; height: 48px; stroke: currentColor; stroke-width: 2; transition: all 0.3s ease; }
         
-        /* Metrics */
         .metric-cards { display: flex; justify-content: space-around; width: 100%; margin-top: 1.5rem; }
         .metric { text-align: center; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; min-width: 120px; border: 1px solid transparent; transition: border-color 0.5s ease; }
         .metric:hover { border-color: var(--surface-border); }
@@ -265,7 +226,6 @@ HTML_TEMPLATE = """
         .chart-container { position: relative; height: 300px; width: 100%; }
         .radar-container { position: relative; height: 350px; width: 100%; }
         
-        /* Animations */
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
@@ -277,7 +237,6 @@ HTML_TEMPLATE = """
 </head>
 <body class="theme-default">
 
-    <!-- Top Navigation / Theme Selector -->
     <nav class="top-nav animate-up">
         <select id="themeSelector" class="theme-selector" onchange="changeTheme(this.value)">
             <option value="theme-default">Theme: Midnight Glass</option>
@@ -323,13 +282,14 @@ HTML_TEMPLATE = """
                             {id: 'Department', label: 'Department Code', type: 'number', step: '1', val: 2},
                             {id: 'Parental_Education', label: 'Parental Education', type: 'number', step: '1', val: 3}
                         ];
+                        // FIXED: Replaced JS template literals with standard string concatenation
                         formFeatures.forEach(f => {
-                            document.write(`
-                                <div class="input-group">
-                                    <label for="${f.id}">${f.label}</label>
-                                    <input type="${f.type}" id="${f.id}" name="${f.id}" step="${f.step}" value="${f.val}" required>
-                                </div>
-                            `);
+                            document.write(
+                                '<div class="input-group">' +
+                                '<label for="' + f.id + '">' + f.label + '</label>' +
+                                '<input type="' + f.type + '" id="' + f.id + '" name="' + f.id + '" step="' + f.step + '" value="' + f.val + '" required>' +
+                                '</div>'
+                            );
                         });
                     </script>
                     <button type="submit" class="btn-predict" id="submitBtn">Run Analysis</button>
@@ -374,25 +334,9 @@ HTML_TEMPLATE = """
         const globalImportances = {{ importance | tojson | safe }};
         let donutChart, radarChart, barChart;
 
-        // --- SVG LOGOS ---
-        const SVG_DROPOUT = `
-            <div class="logo-container">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-            </div>
-        `;
-        
-        const SVG_RETENTION = `
-            <div class="logo-container">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                </svg>
-            </div>
-        `;
+        // FIXED: Using single quotes for string definitions to avoid Python escape sequence errors
+        const SVG_DROPOUT = '<div class="logo-container"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>';
+        const SVG_RETENTION = '<div class="logo-container"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>';
 
         // --- THEME COLOR ENGINE ---
         const themePalette = {
@@ -406,11 +350,12 @@ HTML_TEMPLATE = """
             'theme-synthwave': { primary: '#f97316', secondary: '#a855f7', danger: '#e11d48', success: '#2dd4bf', grid: 'rgba(249,115,22,0.2)' }
         };
 
+        // FIXED: Using string concatenation
         function hexToRgba(hex, alpha) {
             let r = parseInt(hex.slice(1, 3), 16),
                 g = parseInt(hex.slice(3, 5), 16),
                 b = parseInt(hex.slice(5, 7), 16);
-            return \`rgba(\${r}, \${g}, \${b}, \${alpha})\`;
+            return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
         }
 
         // --- CHART INITIALIZATION ---
@@ -470,7 +415,6 @@ HTML_TEMPLATE = """
             barChart.data.datasets[0].borderColor = newBorderColors;
             barChart.update();
             
-            // Force redraw risk text and logo if already generated
             const riskSpan = document.getElementById('riskLevel');
             const resOut = document.getElementById('resultOutput');
             
@@ -509,13 +453,13 @@ HTML_TEMPLATE = """
 
             const resOut = document.getElementById('resultOutput');
             
-            // Inject correct SVG Logo + Text based on prediction
+            // FIXED: Using string concatenation
             if (apiData.prediction_code === 1) {
-                resOut.innerHTML = SVG_DROPOUT + \`<div>\${apiData.prediction}</div>\`;
+                resOut.innerHTML = SVG_DROPOUT + '<div>' + apiData.prediction + '</div>';
                 resOut.className = 'result-status'; 
                 resOut.style.color = colors.danger;
             } else {
-                resOut.innerHTML = SVG_RETENTION + \`<div>\${apiData.prediction}</div>\`;
+                resOut.innerHTML = SVG_RETENTION + '<div>' + apiData.prediction + '</div>';
                 resOut.className = 'result-status'; 
                 resOut.style.color = colors.success;
             }
